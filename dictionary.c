@@ -11,10 +11,6 @@ Dictionary* createDict() {
 	return dict;
 }
 
-int main() {
-	//Makes compile under MinGW on windows, oh
-}
-
 void addToDict(Dictionary* dict, char key[], char data[]) {
 	DictItem* item = malloc(sizeof(DictItem));
 
