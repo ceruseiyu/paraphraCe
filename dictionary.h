@@ -3,8 +3,8 @@
 
 typedef struct itemtype {
 	struct itemtype* next;
-	char *key;
-	char *data;
+	char key[50];
+	char data[50];
 } DictItem;
 
 typedef struct dicttype {
@@ -12,8 +12,15 @@ typedef struct dicttype {
 } Dictionary;
 
 Dictionary* createDict(void);
-void addToDict(Dictionary* dict, char key[], char data[]);
-int dictLength(Dictionary* dict);
 void deleteDict(Dictionary* dict);
+
+void addToDict(Dictionary* dict, char key[], char data[]);
+
+int dictLength(Dictionary* dict);
+
+Dictionary* getFromDict(Dictionary* dict, char key[]);
+
+Dictionary* fileToDict(char file[]);
+void addFileToDict(Dictionary* dict, char file[]);
 
 #endif
