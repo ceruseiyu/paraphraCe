@@ -112,7 +112,6 @@ void addFileToDict(Dictionary* dict, char file[]) {
 
 		if(check == '\n'||check == ' ') {
 			curWord[count] = '\0';
-			printf("%s\n",curWord);
 			count = 0;
 			if(lastWord[0] != (char)0) {
 				addToDict(dict, lastWord, curWord);
