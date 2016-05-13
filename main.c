@@ -62,7 +62,6 @@ int main(int argc, char* argv[]) {
 char* markovPick(Dictionary* dict) {
 	int length = dictLength(dict);
 	int choice = rand() % length;
-	printf("%i %i %i\n",choice, length, rand());
 
 	DictItem* cur = dict->start;
 	int i;
