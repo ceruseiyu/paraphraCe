@@ -17,7 +17,7 @@ void addToDict(Dictionary* dict, char key[], char data[]) {
 	DictItem* item = malloc(sizeof(DictItem));
 
 	if(item == NULL) {
-		return;DICTIONARY_DEFINED
+		return;
 	}
 
 	strcpy(item->key, key);
@@ -107,6 +107,7 @@ void addFileToDict(Dictionary* dict, char file[]) {
 	int count = 0;
 	while((check = fgetc(fileptr)) != EOF) {
 		if(count >= 49) {
+			printf("Word over 50 characters detected! Aborting file read...");
 			break;
 		}
 
