@@ -3,24 +3,38 @@
 
 typedef struct itemtype {
 	struct itemtype* next;
-	char key[50];
-	char data[50];
+	char* data;
+	int weight;
 } DictItem;
 
-typedef struct dicttype {
-	DictItem* start;
-} Dictionary;
+void initDict();
 
-Dictionary* createDict(void);
-void deleteDict(Dictionary* dict);
+DictItem* createDict(char* d, int w);
 
-void addToDict(Dictionary* dict, char key[], char data[]);
+int addToDict(DictItem* dict, char* d, int w);
 
-int dictLength(Dictionary* dict);
+void deleteDict(DictItem* d);
 
-Dictionary* getFromDict(Dictionary* dict, char key[]);
+int getDictWeight(DictItem* d);
 
-Dictionary* fileToDict(char file[]);
-void addFileToDict(Dictionary* dict, char file[]);
+char* pickRandWord(DictItem* d);
+
+int ntLen(char** array);
+
+int calcWeight(int w);
+
+char** fileToArray(char* file);
+
+DictItem* buildDict(char** words, char** keys);
+/**
+int addToDict(DictItem* dict, char* key, char* data);
+
+int dictLength(DictItem* dict);
+
+DictItem* getFromDict(DictItem* dict, char key[]);
+
+DictItem* fileToDict(char* file);
+void addFileToDict(DictItem* dict, char* file);*/
+
 
 #endif

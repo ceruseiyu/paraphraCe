@@ -2,135 +2,207 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
 
-Dictionary* createDict() {
-	Dictionary *dict = malloc(sizeof(Dictionary));
+void initDict() {
+	srand(time(NULL));
+}
 
-	if(dict == NULL ) {
+DictItem* createDict(char* d, int w) {
+	DictItem* dict = malloc(sizeof(DictItem));
+	if(dict == NULL) {
 		return NULL;
 	}
+
+	dict->data = malloc(strlen(d));
+	if(dict->data == NULL) {
+		free(dict);
+		return NULL;
+	}
+	strcpy(dict->data, d);
+
+	dict->weight = w;
 
 	return dict;
 }
 
-void addToDict(Dictionary* dict, char key[], char data[]) {
-	DictItem* item = malloc(sizeof(DictItem));
-
+int addToDict(DictItem* dict, char* d, int w) {
+	DictItem* item = createDict(d, w);
 	if(item == NULL) {
-		return;
-	}
-
-	strcpy(item->key, key);
-	strcpy(item->data, data);
-
-	if(dict->start != NULL) {
-		item->next = dict->start;
-	}
-
-	dict->start = item;
-}
-
-int dictLength(Dictionary* dict) {
-	int count;
-	DictItem* cur;
-
-	if(dict == NULL) {
 		return -1;
 	}
 
-	if(dict->start == NULL) {
-		return 0;
+	if(dict == NULL) {
+		dict = item;
+		return 1;
 	}
 
-	cur = dict->start;
-	count = 1;
-	while(cur->next != NULL) {
-		count++;
-		cur = cur->next;
+	if(dict->next != NULL) {
+		item->next = dict->next;
 	}
 
-	return count;
+	dict->next = item;
+	return 1;
 }
 
-void deleteDict(Dictionary* dict) {
-	int len = dictLength(dict);
+void deleteDict(DictItem* d) {
+	if(d == NULL) {
+		return;
+	}
+
+	if(d->next == NULL) {
+		free(d);
+		return;
+	}
 	DictItem* cur;
 
-	if(len == -1) {
-		return;
-	}
-
-	if(len == 0) {
-		free(dict);
-		return;
-	}
-
-	cur = dict->start;
-	while(cur->next != NULL) {
+	cur = d;
+	while(cur != NULL) {
 		DictItem* save = cur;
 		cur = cur->next;
 		free(save);
 	}
-
-	free(dict);
 }
 
-Dictionary* getFromDict(Dictionary* dict, char key[]) {
-	if(dict == NULL) {
+int getDictWeight(DictItem* d) {
+	if(d == NULL) {
+		return -1;
+	}
+
+	DictItem* cur = d->next;
+	int count = d->weight;
+	while(cur != NULL) {
+		count = count + cur->weight;
+		cur = cur->next;
+	}
+	return count;
+}
+
+char* pickRandWord(DictItem* d) {
+	if(d == NULL) {
 		return NULL;
 	}
 
-	Dictionary* newDict = createDict();
-	if(newDict == NULL) {
-		return NULL;
+	int weight = getDictWeight(d);
+	int ran = rand() % weight;
+
+	if(d->next == NULL) {
+		return d->data;
 	}
 
-	DictItem* cur = dict->start;
+	DictItem* cur = d;
+	int curWeight = 0;
 	while(cur->next != NULL) {
-		if(strcmp(cur->key, key) == 0) {
-			addToDict(newDict, cur->key, cur->data);
+		curWeight += cur->weight;
+		if(curWeight >= ran) {
+			return cur->data;
 		}
 		cur = cur->next;
 	}
-	return newDict;
+	return cur->data;
 }
 
-void addFileToDict(Dictionary* dict, char file[]) {
-	FILE *fileptr;
-	fileptr = fopen(file, "r");
+int ntLen(char** array) {
+	if(array == NULL) {
+		return -1;
+	}
+
+	int i = 0;
+	while(array[i] != NULL) {
+		i++;
+	}
+	return i;
+}
+
+int calcWeight(int w) {
+	return w * 2;
+}
+
+char** fileToArray(char* file) {
+	FILE* fileptr = fopen(file, "r");
 	if(fileptr == NULL) {
-		return;
-	}
-
-	char check;
-	char curWord[50], lastWord[50];
-	int count = 0;
-	while((check = fgetc(fileptr)) != EOF) {
-		if(count >= 49) {
-			printf("Word over 50 characters detected! Aborting file read...");
-			break;
-		}
-
-		if(check == '\n'||check == ' ') {
-			curWord[count] = '\0';
-			count = 0;
-			if(lastWord[0] != (char)0) {
-				addToDict(dict, lastWord, curWord);
-			}
-			strcpy(lastWord, curWord);
-		} else{
-			//printf("%s\n",curWord);
-			curWord[count] = check;
-			count++;
-		}
-	}
-}
-
-Dictionary* fileToDict(char file[]) {
-	Dictionary* dict = createDict();
-  if(dict == NULL) {
 		return NULL;
 	}
-	addFileToDict(dict, file);
+
+	char** words = malloc(sizeof(char*));
+	if(words == NULL) {
+		return NULL;
+	}
+	int wordCount = 0;
+
+	char* curWord = malloc(1);
+	if(curWord == NULL) {
+		free(words);
+		return NULL;
+	}
+	int charCount = 0;
+	char newChar;
+
+	while((newChar = fgetc(fileptr)) != EOF) {
+		if(newChar == ' ' || newChar == '\n') {
+			if(charCount > 0) {
+				words[wordCount] = curWord;
+				wordCount++;
+				curWord = realloc(curWord, charCount+1);
+				curWord[charCount] = '\0';
+				words = realloc(words, sizeof(char*) * (wordCount + 1));
+				curWord = malloc(1);
+				charCount = 0;
+			}
+		} else{
+			curWord = realloc(curWord, charCount+1);
+			if(curWord == NULL) {
+				return NULL;
+			}
+			curWord[charCount] = newChar;
+			charCount++;
+		}
+	}
+	fclose(fileptr);
+
+	if(charCount > 1) {
+		words[wordCount] = curWord;
+		wordCount++;
+		words = realloc(words, sizeof(char*) * (wordCount + 1));
+	}
+	words[wordCount] = NULL; // Terminate array with NULL
+
+	return words;
+}
+
+DictItem* buildDict(char** words, char** keys) {
+	int keyLen = ntLen(keys);
+	if(keyLen < 1) {
+		return NULL;
+	}
+
+	int wordLen = ntLen(words);
+	if(wordLen < 1) {
+		return NULL;
+	}
+
+	DictItem* dict;
+
+	int i;
+	int j;
+	int weight;
+	for(i = 0; i < wordLen; i++) {
+		if(strcmp(words[i], keys[0]) == 0) {
+			weight = 1;
+			j = 1;
+			while(j < keyLen && j <= i) {
+				if(strcmp(words[i - j], keys[j]) == 0) {
+					weight = calcWeight(weight);
+				} else {
+					break;
+				}
+				j++;
+			}
+			if(addToDict(dict, words[i], weight) == -1) {
+				return NULL;
+			}
+		}
+	}
+
 	return dict;
 }

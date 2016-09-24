@@ -3,10 +3,19 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-
 #define DEFAULT_LENGTH 50;
 
-char* markovPick(Dictionary* dict);
+int main(int argc, char* argv[]) {
+  char** test = fileToArray("test.txt");
+  int i;
+  int len = ntLen(test);
+  printf("%i\n", len);
+  for(i = 0; i < len; i++) {
+    printf("%s\n", test[i]);
+  }
+}
+
+/*char* markovPick(Dictionary* dict);
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
@@ -71,3 +80,4 @@ char* markovPick(Dictionary* dict) {
 	}
 	return cur->data;
 }
+*/
