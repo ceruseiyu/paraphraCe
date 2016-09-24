@@ -1,4 +1,5 @@
 #include "dictionary.h"
+#include "ntarray.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -102,72 +103,8 @@ char* pickRandWord(DictItem* d) {
 	return cur->data;
 }
 
-int ntLen(char** array) {
-	if(array == NULL) {
-		return -1;
-	}
-
-	int i = 0;
-	while(array[i] != NULL) {
-		i++;
-	}
-	return i;
-}
-
 int calcWeight(int w) {
 	return w * 2;
-}
-
-char** fileToArray(char* file) {
-	FILE* fileptr = fopen(file, "r");
-	if(fileptr == NULL) {
-		return NULL;
-	}
-
-	char** words = malloc(sizeof(char*));
-	if(words == NULL) {
-		return NULL;
-	}
-	int wordCount = 0;
-
-	char* curWord = malloc(1);
-	if(curWord == NULL) {
-		free(words);
-		return NULL;
-	}
-	int charCount = 0;
-	char newChar;
-
-	while((newChar = fgetc(fileptr)) != EOF) {
-		if(newChar == ' ' || newChar == '\n') {
-			if(charCount > 0) {
-				words[wordCount] = curWord;
-				wordCount++;
-				curWord = realloc(curWord, charCount+1);
-				curWord[charCount] = '\0';
-				words = realloc(words, sizeof(char*) * (wordCount + 1));
-				curWord = malloc(1);
-				charCount = 0;
-			}
-		} else{
-			curWord = realloc(curWord, charCount+1);
-			if(curWord == NULL) {
-				return NULL;
-			}
-			curWord[charCount] = newChar;
-			charCount++;
-		}
-	}
-	fclose(fileptr);
-
-	if(charCount > 1) {
-		words[wordCount] = curWord;
-		wordCount++;
-		words = realloc(words, sizeof(char*) * (wordCount + 1));
-	}
-	words[wordCount] = NULL; // Terminate array with NULL
-
-	return words;
 }
 
 DictItem* buildDict(char** words, char** keys) {
@@ -182,7 +119,6 @@ DictItem* buildDict(char** words, char** keys) {
 	}
 
 	DictItem* dict;
-
 	int i;
 	int j;
 	int weight;
