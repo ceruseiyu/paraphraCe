@@ -11,7 +11,7 @@ void initDict();
 
 DictItem* createDict(char* d, int w);
 
-int addToDict(DictItem* dict, char* d, int w);
+int addToDict(DictItem** dict, char* d, int w);
 
 void deleteDict(DictItem* d);
 

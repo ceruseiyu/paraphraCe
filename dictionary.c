@@ -1,5 +1,6 @@
 #include "dictionary.h"
 #include "ntarray.h"
+#include "macro.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -11,9 +12,7 @@ void initDict() {
 
 DictItem* createDict(char* d, int w) {
 	DictItem* dict = malloc(sizeof(DictItem));
-	if(dict == NULL) {
-		return NULL;
-	}
+	CHECK(dict != NULL, NULL);
 
 	dict->data = malloc(strlen(d));
 	if(dict->data == NULL) {
@@ -27,29 +26,25 @@ DictItem* createDict(char* d, int w) {
 	return dict;
 }
 
-int addToDict(DictItem* dict, char* d, int w) {
+int addToDict(DictItem** dict, char* d, int w) {
 	DictItem* item = createDict(d, w);
-	if(item == NULL) {
-		return -1;
-	}
+	CHECK(item != NULL, -1);
 
-	if(dict == NULL) {
-		dict = item;
+	if(*dict == NULL) {
+		*dict = item;
 		return 1;
 	}
 
-	if(dict->next != NULL) {
-		item->next = dict->next;
+	if((*dict)->next != NULL) {
+		item->next = (*dict)->next;
 	}
 
-	dict->next = item;
+	(*dict)->next = item;
 	return 1;
 }
 
 void deleteDict(DictItem* d) {
-	if(d == NULL) {
-		return;
-	}
+	CHECKVOID(d != NULL);
 
 	if(d->next == NULL) {
 		free(d);
@@ -66,9 +61,7 @@ void deleteDict(DictItem* d) {
 }
 
 int getDictWeight(DictItem* d) {
-	if(d == NULL) {
-		return -1;
-	}
+	CHECK(d != NULL, -1);
 
 	DictItem* cur = d->next;
 	int count = d->weight;
@@ -80,9 +73,7 @@ int getDictWeight(DictItem* d) {
 }
 
 char* pickRandWord(DictItem* d) {
-	if(d == NULL) {
-		return NULL;
-	}
+	CHECK(d != NULL, NULL);
 
 	int weight = getDictWeight(d);
 	int ran = rand() % weight;
@@ -109,16 +100,12 @@ int calcWeight(int w) {
 
 DictItem* buildDict(char** words, char** keys) {
 	int keyLen = ntLen(keys);
-	if(keyLen < 1) {
-		return NULL;
-	}
+	CHECK(keyLen > 0, NULL);
 
 	int wordLen = ntLen(words);
-	if(wordLen < 1) {
-		return NULL;
-	}
+	CHECK(wordLen > 0, NULL);
 
-	DictItem* dict;
+	DictItem* dict = NULL;
 	int i;
 	int j;
 	int weight;
@@ -134,9 +121,7 @@ DictItem* buildDict(char** words, char** keys) {
 				}
 				j++;
 			}
-			if(addToDict(dict, words[i], weight) == -1) {
-				return NULL;
-			}
+			CHECK(addToDict(&dict, words[i], weight)!= -1, NULL);
 		}
 	}
 

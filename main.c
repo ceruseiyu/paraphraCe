@@ -7,9 +7,7 @@
 #include <time.h>
 
 int main(int argc, char* argv[]) {
-  char** test = fileToArray("maine.txt");
-  char** key = {"test", "test2", NULL};
-  DictItem dict = buildDict(test, key);
+  printf(paraBuild("test.txt", 10, 3));
 }
 
 /*char* markovPick(Dictionary* dict);

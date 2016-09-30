@@ -7,20 +7,19 @@
 char* paraBuild(char* file, int count, int depth) {
   initDict();
   char** fileWords = fileToArray(file);
-  if(fileWords == NULL) {
+  if(fileWords == NULL || ntLen(fileWords) < 1) {
     return NULL;
   }
 
-  char** key = randKey(fileWords, depth);
-  if(key == NULL) {
+  char** key = randKey(fileWords);
+  if(key == NULL || ntLen(key) < 1) {
     return NULL;
   }
-}
 
-char* paraBuild(char* file, int count) {
-  paraBuild(file, count, DEFAULT_DEPTH);
-}
+  DictItem* dict = buildDict(fileWords, key);
+  if(dict == NULL) {
+    return NULL;
+  }
 
-char* paraBuild(char* file) {
-  paraBuild(file, DEFAULT_LENGTH, DEFAULT_DEPTH);
+  return "success\n";
 }

@@ -1,11 +1,10 @@
+#include "macro.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 int ntLen(char** array) {
-	if(array == NULL) {
-		return -1;
-	}
+	CHECK(array != NULL, -1);
 
 	int i = 0;
 	while(array[i] != NULL) {
@@ -15,20 +14,31 @@ int ntLen(char** array) {
 }
 
 char** addToArray(char** array, char* data) {
+	CHECK(data != NULL, NULL);
+
 	if(array == NULL) {
-		array = {NULL};
+		array = malloc(sizeof(char*));
+		CHECK(array != NULL, NULL);
+		array[0] = NULL;
 	}
 
 	int len = ntLen(array);
-	array = realloc(array, sizeof(char*) * (len + 1));
 
+	array = realloc(array, sizeof(char*) * (len + 1));
+	CHECK(array != NULL, NULL);
+
+	array[len] = malloc(strlen(data));
+	CHECK(array[len] != NULL, NULL);
+
+	strcpy(array[len], data);
+	return array;
 }
 
 char** fileToArray(char* file) {
+	CHECK(file != NULL, NULL);
+
 	FILE* fileptr = fopen(file, "r");
-	if(fileptr == NULL) {
-		return NULL;
-	}
+	CHECK(fileptr != NULL, NULL);
 
 	char** words = malloc(sizeof(char*));
 	if(words == NULL) {
@@ -50,9 +60,24 @@ char** fileToArray(char* file) {
 				words[wordCount] = curWord;
 				wordCount++;
 				curWord = realloc(curWord, charCount+1);
+				if(curWord == NULL){
+					free(words);
+					return NULL;
+				}
+
 				curWord[charCount] = '\0';
 				words = realloc(words, sizeof(char*) * (wordCount + 1));
+				if(words == NULL) {
+					free(curWord);
+					return NULL;
+				}
+
 				curWord = malloc(1);
+				if(curWord == NULL) {
+					free(words);
+					return NULL;
+				}
+
 				charCount = 0;
 			}
 		} else{
@@ -84,8 +109,10 @@ char** randKey(char** fileWords) {
   }
   int ran = rand() % len;
 
-  char* key[2];
+  char** key = malloc(sizeof(char*)* 2);
   key[0] = malloc(strlen(fileWords[ran]));
   strcpy(key[0], fileWords[ran]);
   key[1] = NULL;
+
+	return key;
 }
