@@ -21,5 +21,34 @@ char* paraBuild(char* file, int count, int depth) {
     return NULL;
   }
 
+  char** para = NULL;
+  if(addToArray(&para, pickRandWord(dict)) == -1) {
+    return NULL;
+  }
+
+  ntFree(&key);
+  deleteDict(&dict);
+
+  int i;
+  for(i = 1; i < count; i++) {
+    key = buildKey(para, depth);
+    if(key == NULL || ntLen(key) < 1) {
+      return NULL;
+    }
+
+    dict = buildDict(fileWords, key);
+    if(dict == NULL) {
+      return NULL;
+    }
+
+    if(addToArray(&para, pickRandWord(dict)) == -1) {
+      return NULL;
+    }
+
+    ntFree(&key);
+    deleteDict(&dict);
+  }
+
+
   return "success\n";
 }

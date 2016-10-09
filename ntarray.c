@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//TODO NTFree - A function that frees an entire NTArray
+void ntFree(char*** ntArray) {
+	return;
+}
+
 int ntLen(char** array) {
 	CHECK(array != NULL, -1);
 
@@ -13,25 +18,25 @@ int ntLen(char** array) {
 	return i;
 }
 
-char** addToArray(char** array, char* data) {
-	CHECK(data != NULL, NULL);
+int addToArray(char*** array, char* data) {
+	CHECK(data != NULL, -1);
 
-	if(array == NULL) {
-		array = malloc(sizeof(char*));
-		CHECK(array != NULL, NULL);
-		array[0] = NULL;
+	if(*array == NULL) {
+		*array = malloc(sizeof(char*));
+		CHECK(*array != NULL, -1);
+		*array[0] = NULL;
 	}
 
-	int len = ntLen(array);
+	int len = ntLen(*array);
 
-	array = realloc(array, sizeof(char*) * (len + 1));
-	CHECK(array != NULL, NULL);
+	*array = realloc(*array, sizeof(char*) * (len + 1));
+	CHECK(*array != NULL, -1);
 
-	array[len] = malloc(strlen(data));
-	CHECK(array[len] != NULL, NULL);
+	*array[len] = malloc(strlen(data));
+	CHECK(*array[len] != NULL, -1);
 
-	strcpy(array[len], data);
-	return array;
+	strcpy(*array[len], data);
+	return 1;
 }
 
 char** fileToArray(char* file) {
@@ -114,5 +119,21 @@ char** randKey(char** fileWords) {
   strcpy(key[0], fileWords[ran]);
   key[1] = NULL;
 
+	return key;
+}
+
+
+//Take in ntarray of any size, build key to the size of depth if possible.
+// Less is okay if not
+char** buildKey(char** words, int depth) {
+	char** key;
+	int len = ntLen(words) - 1; // subtract 1 for final word position
+
+	int i;
+	for (i = 0; i < depth; i++) {
+		if(len - i >= 0) {
+			CHECK(addToArray(&key, words[len - i]), NULL);
+		}
+	}
 	return key;
 }

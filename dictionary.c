@@ -43,21 +43,22 @@ int addToDict(DictItem** dict, char* d, int w) {
 	return 1;
 }
 
-void deleteDict(DictItem* d) {
-	CHECKVOID(d != NULL);
+void deleteDict(DictItem** d) {
+	CHECKVOID(*d != NULL);
 
-	if(d->next == NULL) {
-		free(d);
+	if((*d)->next == NULL) {
+		free(*d);
 		return;
 	}
 	DictItem* cur;
 
-	cur = d;
+	cur = *d;
 	while(cur != NULL) {
 		DictItem* save = cur;
 		cur = cur->next;
 		free(save);
 	}
+	*d = NULL;
 }
 
 int getDictWeight(DictItem* d) {

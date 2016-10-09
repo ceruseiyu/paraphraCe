@@ -13,7 +13,7 @@ DictItem* createDict(char* d, int w);
 
 int addToDict(DictItem** dict, char* d, int w);
 
-void deleteDict(DictItem* d);
+void deleteDict(DictItem** d);
 
 int getDictWeight(DictItem* d);
 
