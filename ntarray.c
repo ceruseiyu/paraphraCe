@@ -1,10 +1,19 @@
 #include "macro.h"
+#include "ntarray.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 //TODO NTFree - A function that frees an entire NTArray
-void ntFree(char*** ntArray) {
+void ntFree(char*** array) {
+	CHECKVOID(*array != NULL);
+	int len = ntLen(*array);
+	int i;
+	for(i = 0; i < len; i++) {
+		free(*array[i]);
+	}
+
+	free(*array);
 	return;
 }
 

@@ -1,11 +1,13 @@
 #include "ntarray.h"
 #include "dictionary.h"
 #include <stdlib.h>
+#include <stdio.h>
 #define DEFAULT_LENGTH 50
 #define DEFAULT_DEPTH 3
 
 char* paraBuild(char* file, int count, int depth) {
   initDict();
+
   char** fileWords = fileToArray(file);
   if(fileWords == NULL || ntLen(fileWords) < 1) {
     return NULL;
@@ -27,7 +29,10 @@ char* paraBuild(char* file, int count, int depth) {
   }
 
   ntFree(&key);
-  deleteDict(&dict);
+
+  //deleteDict(&dict);
+  key = NULL;
+  dict = NULL;
 
   int i;
   for(i = 1; i < count; i++) {
@@ -44,9 +49,10 @@ char* paraBuild(char* file, int count, int depth) {
     if(addToArray(&para, pickRandWord(dict)) == -1) {
       return NULL;
     }
-
     ntFree(&key);
-    deleteDict(&dict);
+    key = NULL;
+    dict = NULL;
+    //deleteDict(&dict);
   }
 
 
