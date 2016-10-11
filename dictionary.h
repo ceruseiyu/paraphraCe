@@ -1,5 +1,6 @@
 #ifndef PARAPHRACE_DICTIONARY
 #define PARAPHRACE_DICTIONARY
+#include "ntarray.h"
 
 typedef struct itemtype {
 	struct itemtype* next;
@@ -21,6 +22,6 @@ char* pickRandWord(DictItem* d);
 
 int calcWeight(int w);
 
-DictItem* buildDict(char** words, char** keys);
+DictItem* buildDict(char** words, NTArray* keys);
 
 #endif

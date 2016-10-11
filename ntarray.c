@@ -5,21 +5,9 @@
 #include <stdlib.h>
 
 //TODO NTFree - A function that frees an entire NTArray
-void ntFree(char*** array) {
-	CHECKVOID(*array != NULL);
-	int len = ntLen(*array);
-	int i;
-	for(i = 0; i < len; i++) {
-		free(*array[i]);
-	}
-
-	free(*array);
-	return;
-}
 
 int ntLen(char** array) {
 	CHECK(array != NULL, -1);
-
 	int i = 0;
 	while(array[i] != NULL) {
 		i++;
@@ -27,26 +15,45 @@ int ntLen(char** array) {
 	return i;
 }
 
-int addToArray(char*** array, char* data) {
-	CHECK(data != NULL, -1);
+NTArray* createArray() {
+	NTArray* array = malloc(sizeof(NTArray));
+	array->data = malloc(sizeof(char*));
+	array->data[0] = NULL;
+	return array;
+}
+
+int addToArray(NTArray* array, char* data) {
+	CHECK(array != NULL, -1);
+	int len = ntLen(array->data);
+	CHECK(len != -1, -1);
+	array->data = realloc(array->data, sizeof(char*) * (len + 2));
+	array->data[len] = malloc(strlen(data));
+	strcpy(array->data[len], data);
+	array->data[len + 1] = NULL;
+	return 1;
+}
+
+/*char*** addToArray(char*** array, char* data) {
+	CHECK(data != NULL, NULL);
 
 	if(*array == NULL) {
 		*array = malloc(sizeof(char*));
-		CHECK(*array != NULL, -1);
+		CHECK(*array != NULL, NULL);
 		*array[0] = NULL;
 	}
 
 	int len = ntLen(*array);
 
-	*array = realloc(*array, sizeof(char*) * (len + 1));
-	CHECK(*array != NULL, -1);
+	*array = realloc(*array, sizeof(char*) * (len + 2));
+	CHECK(*array != NULL, NULL);
 
 	*array[len] = malloc(strlen(data));
-	CHECK(*array[len] != NULL, -1);
+	CHECK(*array[len] != NULL, NULL);
 
 	strcpy(*array[len], data);
-	return 1;
-}
+	*array[len + 1] = NULL;
+	return array;
+} */
 
 char** fileToArray(char* file) {
 	CHECK(file != NULL, NULL);
@@ -115,7 +122,7 @@ char** fileToArray(char* file) {
 	return words;
 }
 
-char** randKey(char** fileWords) {
+NTArray* randKey(char** fileWords) {
   int len = ntLen(fileWords);
 
   if(len < 1) {
@@ -123,10 +130,8 @@ char** randKey(char** fileWords) {
   }
   int ran = rand() % len;
 
-  char** key = malloc(sizeof(char*)* 2);
-  key[0] = malloc(strlen(fileWords[ran]));
-  strcpy(key[0], fileWords[ran]);
-  key[1] = NULL;
+  NTArray* key = createArray();
+	addToArray(key, fileWords[ran]);
 
 	return key;
 }
@@ -134,14 +139,14 @@ char** randKey(char** fileWords) {
 
 //Take in ntarray of any size, build key to the size of depth if possible.
 // Less is okay if not
-char** buildKey(char** words, int depth) {
-	char** key;
-	int len = ntLen(words) - 1; // subtract 1 for final word position
+NTArray* buildKey(NTArray* words, int depth) {
+	NTArray* key = createArray();
+	int len = ntLen(words->data) - 1; // subtract 1 for final word position
 
 	int i;
 	for (i = 0; i < depth; i++) {
 		if(len - i >= 0) {
-			CHECK(addToArray(&key, words[len - i]), NULL);
+			addToArray(key, words->data[len - i]);
 		}
 	}
 	return key;

@@ -22,6 +22,7 @@ DictItem* createDict(char* d, int w) {
 	strcpy(dict->data, d);
 
 	dict->weight = w;
+	dict->next = NULL;
 
 	return dict;
 }
@@ -88,10 +89,12 @@ char* pickRandWord(DictItem* d) {
 	while(cur->next != NULL) {
 		curWeight += cur->weight;
 		if(curWeight >= ran) {
+			printf("%d%s\n",ran,cur->data);
 			return cur->data;
 		}
 		cur = cur->next;
 	}
+	printf("%d%s\n",ran,cur->data);
 	return cur->data;
 }
 
@@ -99,8 +102,8 @@ int calcWeight(int w) {
 	return w * 2;
 }
 
-DictItem* buildDict(char** words, char** keys) {
-	int keyLen = ntLen(keys);
+DictItem* buildDict(char** words, NTArray* keys) {
+	int keyLen = ntLen(keys->data);
 	CHECK(keyLen > 0, NULL);
 
 	int wordLen = ntLen(words);
@@ -111,11 +114,11 @@ DictItem* buildDict(char** words, char** keys) {
 	int j;
 	int weight;
 	for(i = 0; i < wordLen; i++) {
-		if(strcmp(words[i], keys[0]) == 0) {
+		if(strcmp(words[i], keys->data[0]) == 0) {
 			weight = 1;
 			j = 1;
 			while(j < keyLen && j <= i) {
-				if(strcmp(words[i - j], keys[j]) == 0) {
+				if(strcmp(words[i - j], keys->data[j]) == 0) {
 					weight = calcWeight(weight);
 				} else {
 					break;

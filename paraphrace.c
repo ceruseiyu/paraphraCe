@@ -13,46 +13,25 @@ char* paraBuild(char* file, int count, int depth) {
     return NULL;
   }
 
-  char** key = randKey(fileWords);
-  if(key == NULL || ntLen(key) < 1) {
-    return NULL;
-  }
+  NTArray* key = randKey(fileWords);
 
   DictItem* dict = buildDict(fileWords, key);
   if(dict == NULL) {
     return NULL;
   }
 
-  char** para = NULL;
-  if(addToArray(&para, pickRandWord(dict)) == -1) {
-    return NULL;
-  }
-
-  ntFree(&key);
-
-  //deleteDict(&dict);
-  key = NULL;
-  dict = NULL;
+  NTArray* para = createArray();
+  addToArray(para, pickRandWord(dict));
 
   int i;
   for(i = 1; i < count; i++) {
     key = buildKey(para, depth);
-    if(key == NULL || ntLen(key) < 1) {
-      return NULL;
-    }
 
     dict = buildDict(fileWords, key);
-    if(dict == NULL) {
-      return NULL;
-    }
 
-    if(addToArray(&para, pickRandWord(dict)) == -1) {
-      return NULL;
-    }
-    ntFree(&key);
-    key = NULL;
-    dict = NULL;
-    //deleteDict(&dict);
+    addToArray(para, pickRandWord(dict));
+    //printf(para->data[i]);
+
   }
 
 

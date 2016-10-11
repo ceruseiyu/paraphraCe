@@ -7,7 +7,6 @@
 #include <time.h>
 
 int main(int argc, char* argv[]) {
-  printf("It worked this time!");
   printf(paraBuild("test.txt", 10, 3));
 }
 

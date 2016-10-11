@@ -1,11 +1,16 @@
 #ifndef PARAPHRACE_NTARRAY
 #define PARAPHRACE_NTARRAY
 
-void ntFree(char*** ntArray);
+typedef struct nta {
+	char** data;
+} NTArray;
+
 int ntLen(char** array);
-int addToArray(char*** array, char* data);
+//char*** addToArray(char*** array, char* data);
+NTArray* createArray();
+int addToArray(NTArray* array, char* data);
 char** fileToArray(char* file);
-char** randKey(char** fileWords);
-char** buildKey(char** fileWords, int depth);
+NTArray* randKey(char** fileWords);
+NTArray* buildKey(NTArray* words, int depth);
 
 #endif
