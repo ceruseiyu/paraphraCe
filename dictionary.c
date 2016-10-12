@@ -3,7 +3,6 @@
 #include "macro.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <time.h>
 
 void initDict() {
@@ -11,6 +10,7 @@ void initDict() {
 }
 
 DictItem* createDict(char* d, int w) {
+	CHECK(d != NULL, NULL);
 	DictItem* dict = malloc(sizeof(DictItem));
 	CHECK(dict != NULL, NULL);
 
@@ -89,12 +89,10 @@ char* pickRandWord(DictItem* d) {
 	while(cur->next != NULL) {
 		curWeight += cur->weight;
 		if(curWeight >= ran) {
-			printf("%d%s\n",ran,cur->data);
 			return cur->data;
 		}
 		cur = cur->next;
 	}
-	printf("%d%s\n",ran,cur->data);
 	return cur->data;
 }
 
@@ -125,9 +123,14 @@ DictItem* buildDict(char** words, NTArray* keys) {
 				}
 				j++;
 			}
-			CHECK(addToDict(&dict, words[i], weight)!= -1, NULL);
+			if(i < wordLen - 1) {
+				CHECK(addToDict(&dict, words[i + 1], weight)!= -1, NULL);
+			}
 		}
 	}
 
+	if(dict == NULL) {
+		CHECK(addToDict(&dict, ntRandom(words), 1) != -1, NULL);
+	}
 	return dict;
 }

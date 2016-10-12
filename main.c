@@ -1,78 +1,56 @@
-#include "dictionary.h"
-#include "ntarray.h"
 #include "paraphrace.h"
-#include <stdio.h>
-#include <string.h>
+#include "ntarray.h"
 #include <stdlib.h>
-#include <time.h>
+#include <stdio.h>
 
 int main(int argc, char* argv[]) {
-  printf(paraBuild("test.txt", 10, 3));
+  if(argc < 2 || argc > 4) {
+    printf("Incorrect number of arguments!\n");
+    return -1;
+  }
+  char* file = argv[1];
+  FILE* fileptr = fopen(file, "r");
+  if(fileptr == NULL) {
+    printf("No file selected!\n");
+    return -1;
+  }
+  fclose(fileptr);
+
+  if(file == NULL) {
+
+  }
+
+  int count;
+  int depth;
+
+  if(argc > 2) {
+    count = atoi(argv[2]);
+    if(count < 1) {
+      count = -1;
+    }
+  } else {
+    count = -1;
+  }
+
+  if(argc > 3) {
+    depth = atoi(argv[3]);
+    if(depth < 1) {
+      depth = -1;
+    }
+  } else {
+    depth = -1;
+  }
+  char** array = paraBuild(file, count, depth);
+  if(array == NULL) {
+    return -1;
+  }
+  char* str = arrayToStr(array);
+  if(str == NULL) {
+    freeArray(array);
+    return -1;
+  }
+  printf("%s\n", str);
+  free(str);
+  freeArray(array);
+  return 1;
 }
-
-/*char* markovPick(Dictionary* dict);
-
-int main(int argc, char* argv[]) {
-	srand(time(NULL));
-	if(argc > 1 && argc < 4) {
-		Dictionary* dict = fileToDict(argv[1]);
-		if (dict == NULL) {
-			printf("Dictionary read failure!\n");
-			return 0;
-		}
-
-		int length;
-
-		if(argc == 2) {
-			length = DEFAULT_LENGTH;
-		} else if(argc == 3) {
-			length = atoi(argv[2]);
-			if(length < 1) {
-				printf("Minimum number of words allowed is 1!\n");
-				return 0;
-			}
-		}
-
-		int i;
-		Dictionary* searchDict;
-		char newWord[50];
-		char* text = "";
-		for(i = 0; i < length; i++) {
-			if(i == 0) {
-				searchDict = dict;
-			} else{
-				searchDict = getFromDict(dict, newWord);
-				if(dictLength(searchDict) < 1) {
-					searchDict = dict;
-				}
-			}
-			strcpy(newWord, markovPick(searchDict));
-			char* oldText;
-			oldText = text;
-			text = malloc(strlen(newWord)+strlen(oldText)+2);
-			strcpy(text, oldText);
-			strcat(text, " ");
-			strcat(text, newWord);
-			//I'll fix that eventually
-			//free(oldText);
-		}
-		printf("%s\n",text);
-		return 0;
-	}
-	printf("Incorrect number of arguments!\n");
-	return 0;
-}
-
-char* markovPick(Dictionary* dict) {
-	int length = dictLength(dict);
-	int choice = rand() % length;
-
-	DictItem* cur = dict->start;
-	int i;
-
-	for(i = 0; i < choice; i++) {
-		cur = cur->next;
-	}
-	return cur->data;
-}
-*/
